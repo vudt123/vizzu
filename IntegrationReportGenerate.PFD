@@ -125,7 +125,7 @@ else {
            }
         }
         
-        if(ROLESMap.get("ROLESYSNAME") == "LOSApproverHO" && STATE=="Make decision") {
+        if(ROLESMap.get("ROLESYSNAME") == "LOSUnderwriter" && STATE=="Make Decision") {
            isNeedReport = true;
            AttachType = "UWOSignReport";
            FileType = "pdf";
