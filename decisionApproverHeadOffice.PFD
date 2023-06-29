@@ -1,0 +1,1027 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram><Items>
+<Item><ItemNumber>1</ItemNumber>
+ <ItemGUID>1C816860-EBEB-4900-8AC0-7A17746393DD</ItemGUID>
+ 
+<ItemType>TStartItem</ItemType>
+<ItemName>StartItem1</ItemName>
+<ItemCaption>Начало процесса</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>10</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+</Item>
+<Item><ItemNumber>2</ItemNumber>
+ <ItemGUID>752D4A24-71A3-44A0-B976-09618BEE1F81</ItemGUID>
+ 
+<ItemType>TSubProcessItem</ItemType>
+<ItemName>SubProcessItem1</ItemName>
+<ItemCaption>МАСТЕР ФОРМ</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>910</ItemTop>
+<ItemLeft>260</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[COMMON/FORMWIZARD/formWizardFTDS]]></ItemData>
+<ItemInputParam name="referenceDeterminationResult" type="OBJECT" mappedto="PROCESS" value="referenceDeterminationResult" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+<ItemInputParam name="WIZARDSYSNAME" type="STRING" mappedto="PROCESS" value="WIZARDSYSNAME" describe=""></ItemInputParam>
+<ItemOutputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemOutputParam>
+<ItemOutputParam name="formWizardResult" type="STRING" mappedto="PROCESS" value="formWizardResult" describe=""></ItemOutputParam>
+<ItemOutputParam name="wizardErrorMessage" type="STRING" mappedto="PROCESS" value="lastErrorMessage" describe=""></ItemOutputParam>
+<ItemOutputParam name="flagVerifyMainInfo" type="STRING" mappedto="PROCESS" value="flagVerifyMainInfo" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>3</ItemNumber>
+ <ItemGUID>1CB5EAA3-F5B4-4926-ACEC-58BCB92E49E2</ItemGUID>
+ 
+<ItemType>TCaseOpItem</ItemType>
+<ItemName>CaseOpItem1</ItemName>
+<ItemCaption>Проверка результата мастера</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>1000</ItemTop>
+<ItemLeft>260</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var wizardParams = gip("wizardParams", getNewMap());
+var appMap = nvl(wizardParams.get("appMap"), getNewMap());
+wizardParams.remove("PROCESS_RIGHT_LIST");
+wizardParams.remove("PAGEHEADER");
+
+sop("lastErrorMessage", gip("wizardErrorMessage"));
+sop("wizardParams", wizardParams);
+
+var formWizardResult = gip("formWizardResult", "CLOSE")+"";
+
+if ((formWizardResult == "SAVEDRAFT") || (formWizardResult == "SAVE_CLOSE")){
+   formWizardResult = "CLOSE";
+}
+
+sop("EXIT_TYPE", formWizardResult);
+sop("REFSYSNAME", appMap.get("REFSYSNAME"));
+sop("DECISION", wizardParams.get("DECISION"));
+sop("DECISIONDATE", wizardParams.get("DECISIONDATE"));
+sop("DECISIONENDDATE", wizardParams.get("DECISIONENDDATE"));
+sop("STAGERESULT", "");
+sop("DETAILS", nvl(wizardParams.get("DETAILS"), appMap.get("DETAILS")));
+
+if (wizardParams.get("DECISION") != null && formWizardResult != "CLOSE"){
+   sop("MESSAGE_LIST", getNewList([getNewMap({
+      event: 'systemSuccess',
+      caption: 'Успех',
+      text: 'Принято решение «'+ wizardParams.get("DECISION")+"»"
+   })]))
+} 
+
+return formWizardResult;
+
+]]></ItemData>
+<CaseType>JavaScript</CaseType>
+<ItemInputParam name="formWizardResult" type="STRING" mappedto="PROCESS" value="formWizardResult" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+<ItemInputParam name="wizardErrorMessage" type="STRING" mappedto="PROCESS" value="wizardErrorMessage" describe=""></ItemInputParam>
+<ItemOutputParam name="APPLICATIONID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemOutputParam>
+<ItemOutputParam name="REFSYSNAME" type="STRING" mappedto="PROCESS" value="REFSYSNAME" describe=""></ItemOutputParam>
+<ItemOutputParam name="DECISION" type="STRING" mappedto="PROCESS" value="DECISION" describe=""></ItemOutputParam>
+<ItemOutputParam name="DECISIONDATE" type="DATETIME" mappedto="PROCESS" value="DECISIONDATE" describe=""></ItemOutputParam>
+<ItemOutputParam name="DECISIONENDDATE" type="DATETIME" mappedto="PROCESS" value="DECISIONENDDATE" describe=""></ItemOutputParam>
+<ItemOutputParam name="DETAILS" type="STRING" mappedto="PROCESS" value="DETAILS" describe=""></ItemOutputParam>
+<ItemOutputParam name="EXIT_TYPE" type="STRING" mappedto="PROCESS" value="EXIT_TYPE" describe=""></ItemOutputParam>
+<ItemOutputParam name="MESSAGE_LIST" type="OBJECT" mappedto="PROCESS" value="MESSAGE_LIST" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>4</ItemNumber>
+ <ItemGUID>F8688300-FBC3-4273-8F94-F8E4FE71F3FF</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem1</ItemName>
+<ItemCaption>Преобразование справочников</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>550</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var applicationMap = getInputParams("applicationMap");
+var wizardParams = nvl(getInputParams("wizardParams"), new java.util.HashMap());
+var stageMap = nvl(getInputParams("stageResult"), new java.util.HashMap());
+var EDITMODE = gip("EDITMODE", true); 
+wizardParams.put("EDITMODE", EDITMODE);
+wizardParams.put("needSaveApp", gip("needSaveApp", true));
+wizardParams.put("ISCOPYMODE",getInputParams("ISCOPYMODE"));       
+wizardParams.put("curDate",new java.util.Date());
+wizardParams.put("WIZARDNAME", getInputParams("WIZARDNAME"));
+
+
+var appMap = nvl(wizardParams.get("appMap"), new java.util.HashMap());
+var clientMap = nvl(wizardParams.get("clientMap"), new java.util.HashMap());
+
+var productGroupList = gip('productGroupList', getNewList());
+appMap.put('productGroupList',productGroupList);
+
+if (wizardParams.get("applicationBranch") == null){
+   appMap.put("applicationBranch", wizardParams.get("filialName"));
+}
+
+if (wizardParams.get("applicationBranchId") == null){
+   appMap.put("applicationBranchId", wizardParams.get("filialID"));
+}
+
+if (wizardParams.get("applicationDeparment") == null){
+   appMap.put("applicationDeparment", wizardParams.get("depName"));
+}
+
+if (wizardParams.get("applicationDeparmentId") == null){
+   appMap.put("applicationDeparmentId", wizardParams.get("depID"));
+}
+
+var decisionItems = nvl(getInputParams("decisionItems"), new java.util.ArrayList());
+appMap.put("decisionItems", decisionItems);
+
+if(applicationMap != null){
+     appMap.put("principalRepaymentMethodSysName", (applicationMap.get("principalRepaymentMethodSysName")|| ''));   
+     appMap.put("interestRepaymentMethodSysName", (applicationMap.get("interestRepaymentMethodSysName")|| ''));
+     appMap.put("bankProductGroupName", (applicationMap.get("bankProductGroupName")|| ''));
+     appMap.put("classOfCustomerSysName",  (applicationMap.get("classOfCustomerSysName")|| ''));
+     appMap.put("bankProductGroupId",  (applicationMap.get("bankProductGroupId")|| ''));
+     appMap.put("markers",  nvl(applicationMap.get("markers"), getNewMap()));
+}
+
+stageMap.remove("STAGENAME");
+stageMap.remove("STAGESYSNAME");
+stageMap.remove("PERFORMER");
+stageMap.remove("DOCPROCTYPEID");
+stageMap.remove("STAGEDETAILS");
+
+var creditCurrencySysName =appMap.get("creditCurrencySysName")|| '';
+var creditCurrencyName = appMap.get("creditCurrencyName")|| '';
+if(creditCurrencySysName=='') {
+   creditCurrencySysName= wizardParams.get("creditCurrencySysName");    
+   creditCurrencyName= wizardParams.get("creditCurrencyName");
+}
+appMap.put("creditCurrencySysName", creditCurrencySysName);
+appMap.put("creditCurrencyName",creditCurrencyName);
+appMap.put("clientIncomeFlag", true);
+appMap.put("decisionItems", wizardParams.get("decisionItems"));
+
+var formWizardNavigatorParams = new java.util.HashMap();
+formWizardNavigatorParams.put("WIZARDNAME", wizardParams.get("WIZARDNAME"));
+formWizardNavigatorParams.put("CLIENTID", clientMap.get("CLIENTID"));
+formWizardNavigatorParams.put("index", 100);
+
+var appInfoParams = new java.util.HashMap();
+var wizParamRight = new java.util.HashMap();
+wizParamRight.put("appMap", appMap.clone());
+wizParamRight.put("clientMap", clientMap.clone());
+appInfoParams.put("wizardParams", wizParamRight);
+appInfoParams.put("index", 1);
+    
+var PROCESS_RIGHT_LIST = new java.util.HashMap();
+PROCESS_RIGHT_LIST.put(projectSysNameLOS + "/FORMLIB/formWizardNavigator/formWizardNavigator",formWizardNavigatorParams);
+ 
+if(getInputParams("APPLICATIONID") != null) {
+    PROCESS_RIGHT_LIST.put(projectSysNameLOS + "/COMMON/ADDPANEL/appInfo",appInfoParams);    
+}
+
+wizardParams.put("STAGESYSNAME", gip("STAGESYSNAME", "LOSLoanProposal"));
+wizardParams.put("EXECSCRIPTCHECKSFLAG", false);
+wizardParams.put("MINIAPPLICATIONID", gip("MINIAPPLICATIONID"));
+wizardParams.put("appMap", appMap);
+wizardParams.put("stageMap", stageMap);   
+
+wizardParams.put("CODE", (EDITMODE ? gip("CODE", "") : nvl(appMap.get("CODE"), "")));
+
+wizardParams.put("PROCESS_RIGHT_LIST", PROCESS_RIGHT_LIST);
+wizardParams.put("WIZARDPROJECT", projectSysNameLOS);       // для работы мастера форм 
+       
+setOutputParams("wizardParams", wizardParams);
+]]></ItemData>
+<ItemInputParam name="applicationMap" type="OBJECT" mappedto="PROCESS" value="applicationMap" describe=""></ItemInputParam>
+<ItemInputParam name="CODE" type="STRING" mappedto="PROCESS" value="CODE" describe=""></ItemInputParam>
+<ItemInputParam name="purposeList" type="OBJECT" mappedto="PROCESS" value="purposeList" describe=""></ItemInputParam>
+<ItemInputParam name="decisionItems" type="OBJECT" mappedto="PROCESS" value="decisionItems" describe=""></ItemInputParam>
+<ItemInputParam name="APPLICATIONID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+<ItemInputParam name="EDITMODE" type="BOOLEAN" mappedto="PROCESS" value="EDITMODE" describe=""></ItemInputParam>
+<ItemInputParam name="ISCOPYMODE" type="STRING" mappedto="PROCESS" value="ISCOPYMODE" describe=""></ItemInputParam>
+<ItemInputParam name="WIZARDNAME" type="STRING" mappedto="PROCESS" value="WIZARDNAME" describe=""></ItemInputParam>
+<ItemInputParam name="bankProductId" type="LONG" mappedto="PROCESS" value="bankProductId" describe=""></ItemInputParam>
+<ItemInputParam name="bankProductName" type="STRING" mappedto="PROCESS" value="bankProductName" describe=""></ItemInputParam>
+<ItemInputParam name="SCRIPTSYSNAME" type="STRING" mappedto="PROCESS" value="SCRIPTSYSNAME" describe=""></ItemInputParam>
+<ItemInputParam name="STAGESYSNAME" type="STRING" mappedto="PROCESS" value="STAGESYSNAME" describe=""></ItemInputParam>
+<ItemInputParam name="productGroupList" type="OBJECT" mappedto="PROCESS" value="productGroupList" describe=""></ItemInputParam>
+<ItemInputParam name="ROLES" type="OBJECT" mappedto="SESSION" value="ROLES" describe=""></ItemInputParam>
+<ItemInputParam name="MINIAPPLICATIONID" type="LONG" mappedto="PROCESS" value="MINIAPPLICATIONID" describe=""></ItemInputParam>
+<ItemInputParam name="needSaveApp" type="BOOLEAN" mappedto="PROCESS" value="needSaveApp" describe=""></ItemInputParam>
+<ItemInputParam name="stageResult" type="OBJECT" mappedto="PROCESS" value="stageResult" describe=""></ItemInputParam>
+<ItemOutputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>5</ItemNumber>
+ <ItemGUID>5E029349-9099-41D8-B260-3AC73514B13B</ItemGUID>
+ 
+<ItemType>THTMLFormItem</ItemType>
+<ItemName>HTMLFormItem1</ItemName>
+<ItemCaption>Ошибка при выполнении</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>50</ItemTop>
+<ItemLeft>730</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>780</ItemHeight>
+<ViewName>COMMON\errorMessage</ViewName>
+<ItemInputParam name="lastErrorMessage" type="STRING" mappedto="PROCESS" value="lastErrorMessage" describe="" forclear=""></ItemInputParam>
+</Item>
+<Item><ItemNumber>6</ItemNumber>
+ <ItemGUID>F2726129-A2F6-4AD4-894E-261465012B82</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction3</ItemName>
+<ItemCaption>Получение данных по заявке</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>460</ItemTop>
+<ItemLeft>340</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[frontws2]?documentGetByIdOld]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="DOCUMENTID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="applicationMap" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>7</ItemNumber>
+ <ItemGUID>402F90B9-8CBA-453B-8CE5-1996CC7FF3D6</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem3</ItemName>
+<ItemCaption>Распаковка параметров</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>100</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var wizardParams = gip("wizardParams", getNewMap());
+var appMap = nvl(wizardParams.get("appMap"), getNewMap());
+var department = nvl(wizardParams.get("department"), "");
+sop("WIZARDSYSNAME", "decisionApproverHeadOfficeINT");
+sop("department", department);
+sop("APPLICATIONID", wizardParams.get("DOCUMENTID"));
+var stageSysname = gip("STAGESYSNAME", wizardParams.get("STAGESYSNAME"));
+sop("STAGESYSNAME", nvl(stageSysname, appMap.get("STAGESYSNAME")));
+sop("decisionItems", wizardParams.get("decisionItems"));
+var STAGESYSNAMES = getNewList();
+STAGESYSNAMES.add("LOSAppEdit");
+STAGESYSNAMES.add("LOSMakeDecisionApproverHO");
+STAGESYSNAMES.add("LOSSendToAppSupplement");
+sop("STAGESYSNAMES", STAGESYSNAMES);
+
+
+
+]]></ItemData>
+<ItemInputParam name="STAGESYSNAME" type="STRING" mappedto="PROCESS" value="STAGESYSNAME" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+<ItemOutputParam name="department" type="STRING" mappedto="PROCESS" value="department" describe=""></ItemOutputParam>
+<ItemOutputParam name="decisionItems" type="OBJECT" mappedto="PROCESS" value="decisionItems" describe=""></ItemOutputParam>
+<ItemOutputParam name="APPLICATIONID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemOutputParam>
+<ItemOutputParam name="STAGESYSNAME" type="STRING" mappedto="PROCESS" value="STAGESYSNAME" describe=""></ItemOutputParam>
+<ItemOutputParam name="WIZARDSYSNAME" type="STRING" mappedto="PROCESS" value="WIZARDSYSNAME" describe=""></ItemOutputParam>
+<ItemOutputParam name="STAGESYSNAMES" type="OBJECT" mappedto="PROCESS" value="STAGESYSNAMES" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>8</ItemNumber>
+ <ItemGUID>FF7A6E1E-841B-4766-B2A0-2E59A9A9D66B</ItemGUID>
+ 
+<ItemType>TConditionOpItem</ItemType>
+<ItemName>ConditionOpItem1</ItemName>
+<ItemCaption>Проверка STAGEID</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>460</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var stageID = gip("STAGEID", "");
+
+if (stageID != "") {
+   return "BYSTAGE";
+}
+
+return "BYAPP"
+]]></ItemData>
+<ItemInputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemInputParam>
+</Item>
+<Item><ItemNumber>9</ItemNumber>
+ <ItemGUID>42B8435A-E2D9-4C29-8F8D-C5480B6A481F</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction4</ItemName>
+<ItemCaption>Поиск последнего этапа</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>189</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[frontws2]?docProcessingGetLastByDocumentIdAndStagename]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="DOCUMENTID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemInputParam>
+<ItemInputParam name="STAGESYSNAME" type="STRING" mappedto="PROCESS" value="STAGESYSNAME" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="stageResult" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>10</ItemNumber>
+ <ItemGUID>64052429-C06C-45D6-97A7-FD676D62840A</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem4</ItemName>
+<ItemCaption>Задаем STAGEID</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>280</ItemTop>
+<ItemLeft>10</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var stageMap = gip("stageResult", getNewMap());
+sop("STAGEID", stageMap.get("STAGEID"));
+]]></ItemData>
+<ItemInputParam name="stageResult" type="OBJECT" mappedto="PROCESS" value="stageResult" describe=""></ItemInputParam>
+<ItemOutputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>11</ItemNumber>
+ <ItemGUID>AA306FFA-C674-4950-BA0A-1CFA7E9E80DD</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction2</ItemName>
+<ItemCaption>Получение филиала DepartmentID</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>730</ItemTop>
+<ItemLeft>230</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[adminws]?dsDepartmentBrowseListBaseAttribByParam]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="DepartmentID" type="STRING" mappedto="PROCESS" value="DepartmentID" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="departmentList" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>12</ItemNumber>
+ <ItemGUID>298FCCE5-FBB8-4040-A939-A662C0326B19</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction5</ItemName>
+<ItemCaption>Получение филиала DepartmentName</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>730</ItemTop>
+<ItemLeft>460</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[adminws]?dsDepartmentBrowseListBaseAttribByParam]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="DepartmentName" type="STRING" mappedto="PROCESS" value="department" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="departmentList" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>13</ItemNumber>
+ <ItemGUID>2BBD2FB2-FBC6-48FB-93CB-F07C7FDF31C9</ItemGUID>
+ 
+<ItemType>TCaseOpItem</ItemType>
+<ItemName>CaseOpItem2</ItemName>
+<ItemCaption>Развилка по department</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>640</ItemTop>
+<ItemLeft>190</ItemLeft>
+<ItemWidth>400</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[
+var department= InputParams.get("department").getParamData()!=null ? InputParams.get("department").getParamData() : "";
+
+if( department=="" ){
+     return "NO";
+} else if(department=="CURRENT"){
+    return "CURRENT";
+}else{
+     return "OTHER";
+}
+]]></ItemData>
+<CaseType>JavaScript</CaseType>
+<ItemInputParam name="department" type="STRING" mappedto="PROCESS" value="department" describe=""></ItemInputParam>
+</Item>
+<Item><ItemNumber>14</ItemNumber>
+ <ItemGUID>C812B3DC-7730-4252-9E2E-E2ACF0D51EBD</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem5</ItemName>
+<ItemCaption>Формирование formParams </ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>820</ItemTop>
+<ItemLeft>180</ItemLeft>
+<ItemWidth>330</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var departmentList = gip("departmentList", new java.util.ArrayList());
+
+var DepartmentIDList = new java.util.ArrayList();
+
+for(var j=0; j<departmentList.size(); j++){
+      var departmentMap = departmentList.get(j);
+      DepartmentIDList.add(departmentMap.get("DepartmentID"));  
+}
+
+var wizardParams = getInputParams("wizardParams");
+wizardParams.put("DepartmentIDList", DepartmentIDList);
+sop("wizardParams",wizardParams);
+]]></ItemData>
+<ItemInputParam name="departmentList" type="OBJECT" mappedto="PROCESS" value="departmentList" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+</Item>
+<Item><ItemNumber>15</ItemNumber>
+ <ItemGUID>62E3246E-B511-4A4D-8175-26AFF7AC1FBD</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction6</ItemName>
+<ItemCaption>Наименование мастера форм</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>382</ItemTop>
+<ItemLeft>338</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[frontws2]?wizardGetListByParams]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="SYSNAME" type="STRING" mappedto="PROCESS" value="WIZARDSYSNAME" describe=""></ItemInputParam>
+<ItemInputParam name="ReturnAsHashMap" type="BOOLEAN" mappedto="CONSTANTS" value="true" describe=""></ItemInputParam>
+<ItemOutputParam name="NAME" type="STRING" mappedto="PROCESS" value="WIZARDNAME" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>16</ItemNumber>
+ <ItemGUID>1D4B9EFE-2960-4F97-B291-F6874970C49A</ItemGUID>
+ 
+<ItemType>TEndItem</ItemType>
+<ItemName>EndItem1</ItemName>
+<ItemCaption>Заголовок шага</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>1110</ItemTop>
+<ItemLeft>260</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+</Item>
+<Item><ItemNumber>17</ItemNumber>
+ <ItemGUID>C4E248A7-395C-4EF1-A61C-96F6B9F5CDC9</ItemGUID>
+ 
+<ItemType>TSubProcessItem</ItemType>
+<ItemName>SubProcessItem2</ItemName>
+<ItemCaption>Get user info</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>372</ItemTop>
+<ItemLeft>11</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[COMMON/decisionMaking/getUserInfo]]></ItemData>
+<ItemOutputParam name="CODE" type="STRING" mappedto="PROCESS" value="CODE" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>18</ItemNumber>
+ <ItemGUID>9FF70380-73AB-4DF0-94B3-6359A9D7D3E5</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction1</ItemName>
+<ItemCaption>Поиск последнего этапа</ItemCaption>
+<ItemDescription>Описание данного шага процесса
+</ItemDescription>
+<ItemTop>101</ItemTop>
+<ItemLeft>259</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[frontws2]?docProcessingGetLastIdByDocumentIdAndStagename]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="DOCUMENTID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemInputParam>
+<ItemInputParam name="STAGESYSNAMES" type="OBJECT" mappedto="PROCESS" value="STAGESYSNAMES" describe=""></ItemInputParam>
+<ItemInputParam name="ReturnAsHashMap" type="STRING" mappedto="CONSTANTS" value="TRUE" describe=""></ItemInputParam>
+<ItemOutputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>19</ItemNumber>
+ <ItemGUID>4B1EE465-F013-4174-A379-C0CC9D7D81CE</ItemGUID>
+ 
+<ItemType>TRemoteAction</ItemType>
+<ItemName>RemoteAction7</ItemName>
+<ItemCaption>Поиск этапа по STAGEID</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>187</ItemTop>
+<ItemLeft>505</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[[frontws2]?docProcessingGetById]]></ItemData>
+<ItemCallMode>cmSyncCall</ItemCallMode>
+<ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
+<ItemUserAuthentication>True</ItemUserAuthentication>
+<ItemInputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="stageResult" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>20</ItemNumber>
+ <ItemGUID>38BC8885-F55F-4E7F-936E-7262233A24F8</ItemGUID>
+ 
+<ItemType>TConditionOpItem</ItemType>
+<ItemName>ConditionOpItem2</ItemName>
+<ItemCaption>Есть последний этап?</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>188</ItemTop>
+<ItemLeft>260</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var STAGEID = gip("STAGEID", "");
+if (STAGEID) {
+   return "GET_LAST_STAGE";
+}
+return "SKIP";
+]]></ItemData>
+<ItemInputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemInputParam>
+</Item>
+<Item><ItemNumber>21</ItemNumber>
+ <ItemGUID>167C7D32-E471-41C6-A124-DDEBC26A9E15</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem2</ItemName>
+<ItemCaption>Задаем appMap</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>284</ItemTop>
+<ItemLeft>336</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var stageMap = gip("stageResult", getNewMap());
+var stageID  = stageMap.get("STAGEID");
+sop("STAGEID", stageID);
+
+if (nvl(stageID, 0) > 0) {
+   var wizardParams = nvl(getInputParams("wizardParams"), new java.util.HashMap());
+   //var appMap       = nvl(stageMap.get("appMap"), new java.util.HashMap());
+   var appMap = stageMap.get("appMap");
+   if(appMap){
+        wizardParams.put("appMap", appMap);   
+   }
+   sop("wizardParams", wizardParams);
+}
+
+]]></ItemData>
+<ItemInputParam name="stageResult" type="OBJECT" mappedto="PROCESS" value="stageResult" describe=""></ItemInputParam>
+<ItemInputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemInputParam>
+<ItemOutputParam name="STAGEID" type="LONG" mappedto="PROCESS" value="STAGEID" describe=""></ItemOutputParam>
+<ItemOutputParam name="wizardParams" type="OBJECT" mappedto="PROCESS" value="wizardParams" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>22</ItemNumber>
+ <ItemGUID>2A9CE36D-5A15-45AC-8F6F-B25FDDDCA154</ItemGUID>
+ 
+<ItemType>TSubProcessItem</ItemType>
+<ItemName>SubProcessItem3</ItemName>
+<ItemCaption>Generation of report</ItemCaption>
+<ItemDescription></ItemDescription>
+<ItemTop>1056</ItemTop>
+<ItemLeft>40</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[COMMON\SignReport\IntegrationReportGenerate]]></ItemData>
+<ItemInputParam name="APPLICATIONID" type="LONG" mappedto="PROCESS" value="APPLICATIONID" describe=""></ItemInputParam>
+<ItemOutputParam name="bankProdLocaleList" type="OBJECT" mappedto="PROCESS" value="bankProdLocaleList" describe=""></ItemOutputParam>
+<ItemOutputParam name="bankProdParamMap" type="OBJECT" mappedto="PROCESS" value="bankProdParamMap" describe=""></ItemOutputParam>
+</Item>
+</Items>
+<Links><Link>
+<LinkNumber>1</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>F8A928BE-EBBC-4DF4-B54A-0A6BB7654096</LinkGUID>
+<ItemName>Link1</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>2</LinkStartItem>
+<LinkEndItem>3</LinkEndItem>
+<MiddlePointTop>970</MiddlePointTop>
+<MiddlePointLeft>350</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>2</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>1145F182-5891-4FD3-AA83-9CC29BC93FC4</LinkGUID>
+<ItemName>Link9</ItemName>
+<LinkCaption>ERROR</LinkCaption>
+<Caption>ERROR</Caption>
+<LinkStartItem>3</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>1032</MiddlePointTop>
+<MiddlePointLeft>780</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>3</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>5D71EBBA-0B28-43E6-B23A-22A82B3B0AC4</LinkGUID>
+<ItemName>Link3</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>9</LinkStartItem>
+<LinkEndItem>10</LinkEndItem>
+<MiddlePointTop>250</MiddlePointTop>
+<MiddlePointLeft>104</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>4</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>65C27E4A-E0D7-4DB1-B789-AFD76505C0C8</LinkGUID>
+<ItemName>Link5</ItemName>
+<LinkCaption>BYAPP</LinkCaption>
+<Caption>BYAPP</Caption>
+<LinkStartItem>8</LinkStartItem>
+<LinkEndItem>6</LinkEndItem>
+<MiddlePointTop>490</MiddlePointTop>
+<MiddlePointLeft>275</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>5</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>C51AE03C-9785-4500-AB30-2965FF9CF33D</LinkGUID>
+<ItemName>ExceptionLink1</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>6</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>490</MiddlePointTop>
+<MiddlePointLeft>635</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>6</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>61C28A8E-8B56-4EA6-8B93-2443F6103EF8</LinkGUID>
+<ItemName>ExceptionLink2</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>9</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>237</MiddlePointTop>
+<MiddlePointLeft>467</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>7</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>93AD6ABB-E734-4EE0-A5B8-A189261E72E8</LinkGUID>
+<ItemName>Link11</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>1</LinkStartItem>
+<LinkEndItem>7</LinkEndItem>
+<MiddlePointTop>70</MiddlePointTop>
+<MiddlePointLeft>103</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>8</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>C72D30CF-8C9D-49A7-950D-D6781FE4EE4A</LinkGUID>
+<ItemName>Link6</ItemName>
+<LinkCaption>BYSTAGE</LinkCaption>
+<Caption>BYSTAGE</Caption>
+<LinkStartItem>8</LinkStartItem>
+<LinkEndItem>4</LinkEndItem>
+<MiddlePointTop>520</MiddlePointTop>
+<MiddlePointLeft>103</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>9</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>164B3D34-BF61-4092-BF29-888CBE95ED83</LinkGUID>
+<ItemName>Link8</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>6</LinkStartItem>
+<LinkEndItem>4</LinkEndItem>
+<MiddlePointTop>566</MiddlePointTop>
+<MiddlePointLeft>434</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>10</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>98FBB8BA-88A4-48DD-A8C1-57CEEE071DD2</LinkGUID>
+<ItemName>Link12</ItemName>
+<LinkCaption>CURRENT</LinkCaption>
+<Caption>CURRENT</Caption>
+<LinkStartItem>13</LinkStartItem>
+<LinkEndItem>11</LinkEndItem>
+<MiddlePointTop>700</MiddlePointTop>
+<MiddlePointLeft>327</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>11</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>AFBDB975-04CA-4E8D-A5A2-46DFAEA340A9</LinkGUID>
+<ItemName>Link14</ItemName>
+<LinkCaption>OTHER</LinkCaption>
+<Caption>OTHER</Caption>
+<LinkStartItem>13</LinkStartItem>
+<LinkEndItem>12</LinkEndItem>
+<MiddlePointTop>700</MiddlePointTop>
+<MiddlePointLeft>523</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>12</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>FDEC2599-5557-47F8-B9C1-D9FECF83D583</LinkGUID>
+<ItemName>Link15</ItemName>
+<LinkCaption>NO</LinkCaption>
+<Caption>NO</Caption>
+<LinkStartItem>13</LinkStartItem>
+<LinkEndItem>14</LinkEndItem>
+<MiddlePointTop>796</MiddlePointTop>
+<MiddlePointLeft>205</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>13</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>13ACA4CD-87E2-4080-BBCE-9AFB61509756</LinkGUID>
+<ItemName>Link16</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>14</LinkStartItem>
+<LinkEndItem>2</LinkEndItem>
+<MiddlePointTop>880</MiddlePointTop>
+<MiddlePointLeft>354</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>14</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>2C397382-4E19-493C-AC71-FBDFA3CE9728</LinkGUID>
+<ItemName>Link17</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>4</LinkStartItem>
+<LinkEndItem>13</LinkEndItem>
+<MiddlePointTop>587</MiddlePointTop>
+<MiddlePointLeft>369</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>15</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>435C5420-6770-48DF-B35D-97B23834DB8F</LinkGUID>
+<ItemName>Link18</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>11</LinkStartItem>
+<LinkEndItem>14</LinkEndItem>
+<MiddlePointTop>805</MiddlePointTop>
+<MiddlePointLeft>327</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>16</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>3C60D84C-0815-4AA5-BCCB-15742C6E17D3</LinkGUID>
+<ItemName>Link19</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>12</LinkStartItem>
+<LinkEndItem>14</LinkEndItem>
+<MiddlePointTop>805</MiddlePointTop>
+<MiddlePointLeft>481</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>17</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>C3D3EBF9-2F51-4FAC-81FF-AB78B3B75738</LinkGUID>
+<ItemName>Link4</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>10</LinkStartItem>
+<LinkEndItem>15</LinkEndItem>
+<MiddlePointTop>384</MiddlePointTop>
+<MiddlePointLeft>268</MiddlePointLeft>
+<MiddlePoint2Top>310</MiddlePoint2Top>
+<MiddlePoint2Left>268</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>18</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>1B48601C-3C6E-453E-AC17-4EF11C6DA61F</LinkGUID>
+<ItemName>ExceptionLink3</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>15</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>310</MiddlePointTop>
+<MiddlePointLeft>602</MiddlePointLeft>
+<MiddlePoint2Top>406</MiddlePoint2Top>
+<MiddlePoint2Left>602</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>19</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>BEB42C97-070C-4A52-B94E-7BB8FC2A6C16</LinkGUID>
+<ItemName>ExceptionLink5</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>12</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>759</MiddlePointTop>
+<MiddlePointLeft>690</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>20</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>A5C6763A-4BFD-470B-90D2-D4D3A0DF341F</LinkGUID>
+<ItemName>ExceptionLink6</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>11</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>760</MiddlePointTop>
+<MiddlePointLeft>577</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>21</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>3297AB3F-CD00-48FA-B52A-16BD3EE5BD30</LinkGUID>
+<ItemName>Link13</ItemName>
+<LinkCaption>CLOSE</LinkCaption>
+<Caption>CLOSE</Caption>
+<LinkStartItem>3</LinkStartItem>
+<LinkEndItem>16</LinkEndItem>
+<MiddlePointTop>1085</MiddlePointTop>
+<MiddlePointLeft>378</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>22</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>9708183C-6240-4062-8C4C-959774ABA4F6</LinkGUID>
+<ItemName>Link21</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>5</LinkStartItem>
+<LinkEndItem>16</LinkEndItem>
+<MiddlePointTop>1142</MiddlePointTop>
+<MiddlePointLeft>827</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>23</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>41008DC4-815C-47F1-B998-B33E33D1CAFE</LinkGUID>
+<ItemName>Link20</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>17</LinkStartItem>
+<LinkEndItem>8</LinkEndItem>
+<MiddlePointTop>458</MiddlePointTop>
+<MiddlePointLeft>115</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>24</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>BCA20AC4-223F-4CF0-8DB7-1E91D749C53B</LinkGUID>
+<ItemName>Link10</ItemName>
+<LinkCaption></LinkCaption>
+<Caption></Caption>
+<LinkStartItem>15</LinkStartItem>
+<LinkEndItem>17</LinkEndItem>
+<MiddlePointTop>407</MiddlePointTop>
+<MiddlePointLeft>275</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>25</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>A38A6A45-D782-425D-BE89-1D416CFE5840</LinkGUID>
+<ItemName>Link22</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link27</Caption>
+<LinkStartItem>7</LinkStartItem>
+<LinkEndItem>18</LinkEndItem>
+<MiddlePointTop>131</MiddlePointTop>
+<MiddlePointLeft>232</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>26</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>B5A7743B-DB88-4CE6-BD51-912A3B9EA4EF</LinkGUID>
+<ItemName>ExceptionLink4</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link30</Caption>
+<LinkStartItem>18</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>131</MiddlePointTop>
+<MiddlePointLeft>594</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>27</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<LinkGUID>11CF27B5-4336-48D6-89F3-8738E71A8384</LinkGUID>
+<ItemName>ExceptionLink7</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link31</Caption>
+<LinkStartItem>19</LinkStartItem>
+<LinkEndItem>5</LinkEndItem>
+<MiddlePointTop>217</MiddlePointTop>
+<MiddlePointLeft>720</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>28</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>7166C5F4-4FDA-4C47-B809-541E606826F4</LinkGUID>
+<ItemName>Link2</ItemName>
+<LinkCaption>GET_LAST_STAGE</LinkCaption>
+<Caption>GET_LAST_STAGE</Caption>
+<LinkStartItem>20</LinkStartItem>
+<LinkEndItem>19</LinkEndItem>
+<MiddlePointTop>209</MiddlePointTop>
+<MiddlePointLeft>465</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>29</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>0962F20C-8931-4F3B-BEAD-D847DE2842D2</LinkGUID>
+<ItemName>Link23</ItemName>
+<LinkCaption>SKIP</LinkCaption>
+<Caption>SKIP</Caption>
+<LinkStartItem>20</LinkStartItem>
+<LinkEndItem>9</LinkEndItem>
+<MiddlePointTop>213</MiddlePointTop>
+<MiddlePointLeft>240</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>30</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>C1B75AED-74EC-4A39-AC7C-B14DFA84D056</LinkGUID>
+<ItemName>Link25</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link32</Caption>
+<LinkStartItem>18</LinkStartItem>
+<LinkEndItem>20</LinkEndItem>
+<MiddlePointTop>167</MiddlePointTop>
+<MiddlePointLeft>358</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>31</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>25E1928F-E798-44F1-9EEB-EB9C16CA3263</LinkGUID>
+<ItemName>Link24</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link32</Caption>
+<LinkStartItem>19</LinkStartItem>
+<LinkEndItem>21</LinkEndItem>
+<MiddlePointTop>259</MiddlePointTop>
+<MiddlePointLeft>520</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>32</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>6C95F91C-1B88-46F8-877C-5531D7FF297C</LinkGUID>
+<ItemName>Link26</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link33</Caption>
+<LinkStartItem>21</LinkStartItem>
+<LinkEndItem>15</LinkEndItem>
+<MiddlePointTop>363</MiddlePointTop>
+<MiddlePointLeft>437</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>33</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>F76C1100-0045-4205-B67D-7F8BF252011D</LinkGUID>
+<ItemName>Link27</ItemName>
+<LinkCaption>SAVE</LinkCaption>
+<Caption>SAVE</Caption>
+<LinkStartItem>3</LinkStartItem>
+<LinkEndItem>22</LinkEndItem>
+<MiddlePointTop>1022</MiddlePointTop>
+<MiddlePointLeft>138</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>34</LinkNumber>
+<LinkType>TLink</LinkType>
+<LinkGUID>77592569-9C06-4639-83F6-6601CB48B9D5</LinkGUID>
+<ItemName>Link7</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link34</Caption>
+<LinkStartItem>22</LinkStartItem>
+<LinkEndItem>16</LinkEndItem>
+<MiddlePointTop>1134</MiddlePointTop>
+<MiddlePointLeft>137</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link>
+</Links>
+</Diagram>
