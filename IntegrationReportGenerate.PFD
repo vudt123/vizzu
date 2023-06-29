@@ -87,10 +87,12 @@ var assetsList = gip("assetsList", getNewList());
 var AttachType = "";
 var FileType = "";
 var FileName = "";
+logger.info("#####Vizzu comment: 1");  
 if( ROLES.size()<=0 ){
      return "EXIT";
 } 
 else {
+   logger.info("#####Vizzu comment: 2");  
    var isNeedReport = false;
    for (var i = 0, countI = ROLES.size(); i < countI; i++){
         var ROLESMap = ROLES.get(i);
@@ -105,7 +107,7 @@ else {
            AttachType = "BranchSignReport";
            FileName = "06";// FileName = "Tờ trình thẩm định và phê duyệt tại ĐVKD"; 
         }
-        
+        logger.info("#####Vizzu comment: ROLESYSNAME=" + ROLESMap.get("ROLESYSNAME") + " | STATE = " + STATE);  
         if(ROLESMap.get("ROLESYSNAME") == "LOSUnderwriter" && STATE=="Make Recommendations") {               //STATE=="Review by Underwriter"
            isNeedReport = true;
            AttachType = "UWOFristReport";
