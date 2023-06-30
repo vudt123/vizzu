@@ -100,7 +100,7 @@ else {
            FileName = "06";// FileName = "Tờ trình thẩm định và phê duyệt tại ĐVKD"; 
         }
         logger.info("#####Vizzu Comment: State = " +STATE);
-        if(ROLESMap.get("ROLESYSNAME") == "LOSTeamLeaderOfSalesPerson" && STATE=="LOSDataInputControl") { //STATE=="Data Input Control"
+        if(ROLESMap.get("ROLESYSNAME") == "LOSTeamLeaderOfSalesPerson" && (STATE=="Data Input Control" || STATE=="LOSDataInputControl")) { //STATE=="Data Input Control"
            isNeedReport = true;
            AttachType = "BranchSignReport";
            FileName = "06";// FileName = "Tờ trình thẩm định và phê duyệt tại ĐVKD"; 
