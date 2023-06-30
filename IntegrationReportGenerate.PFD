@@ -97,12 +97,14 @@ else {
         if(ROLESMap.get("ROLESYSNAME") == "LOSBranchManager" && STATE=="Make Decision by Branch Manager"){
            isNeedReport = true;
            AttachType = "BranchSignReport";
+           FileType = "doc";
            FileName = "06";// FileName = "Tờ trình thẩm định và phê duyệt tại ĐVKD"; 
         }
         logger.info("#####Vizzu Comment: State = " +STATE);
         if(ROLESMap.get("ROLESYSNAME") == "LOSTeamLeaderOfSalesPerson" && (STATE=="Data Input Control" || STATE=="LOSDataInputControl")) { //STATE=="Data Input Control"
            isNeedReport = true;
            AttachType = "BranchSignReport";
+           FileType = "doc";
            FileName = "06";// FileName = "Tờ trình thẩm định và phê duyệt tại ĐVKD"; 
         }
         if(ROLESMap.get("ROLESYSNAME") == "LOSUnderwriter" && STATE=="Make Recommendations") {               //STATE=="Review by Underwriter"
@@ -125,7 +127,7 @@ else {
         if(ROLESMap.get("ROLESYSNAME") == "LOSApproverHO" && STATE=="Make Decision") {
            isNeedReport = true;
            AttachType = "UWOSignReport";
-           FileType = "pdf";
+           FileType = "doc";
            FileName = "";
            if(assetsList.size()>0) {
               if(flowSysName == "f2_flow")   FileName = "01";//  FileName = "Báo cáo tái thẩm định tín dụng có TSĐB - Luồng F2 - BM12"; 
