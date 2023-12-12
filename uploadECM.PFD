@@ -463,7 +463,7 @@ function generateUUID() {
 <ItemInputParam name="Storage" type="STRING" mappedto="PROCESS" value="STORAGE" describe=""></ItemInputParam>
 <ItemInputParam name="FileID" type="STRING" mappedto="PROCESS" value="ecmFileID" describe=""></ItemInputParam>
 <ItemInputParam name="File" type="OBJECT" mappedto="PROCESS" value="File" describe=""></ItemInputParam>
-<ItemOutputParam name="FileID" type="STRING" mappedto="PROCESS" value="ECMFileId" describe=""></ItemOutputParam>
+<ItemOutputParam name="FileID" type="STRING" mappedto="PROCESS" value="ECMFileIdNew" describe=""></ItemOutputParam>
 </Item>
 <Item><ItemNumber>11</ItemNumber>
  <ItemGUID>1689F885-6D49-4AD8-A21D-3265CCECC141</ItemGUID>
