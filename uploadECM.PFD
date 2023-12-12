@@ -272,6 +272,7 @@ if (PARAMS.get("ConstantList").size() > 0) {
 <CaseType>JavaScript</CaseType>
 <ItemInputParam name="needUpdate" type="STRING" mappedto="PROCESS" value="needUpdate" describe=""></ItemInputParam>
 <ItemInputParam name="PARAMS" type="OBJECT" mappedto="PROCESS" value="PARAMS" describe=""></ItemInputParam>
+<ItemInputParam name="uploadFileID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
 </Item>
 <Item><ItemNumber>6</ItemNumber>
  <ItemGUID>F178BE3B-BD7E-4951-95EB-59A224D2F88C</ItemGUID>
@@ -422,6 +423,7 @@ function generateUUID() {
 
     
 ]]></ItemData>
+<ItemInputParam name="uploadFileID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
 <ItemInputParam name="ecmFileID" type="STRING" mappedto="PROCESS" value="ecmFileID" describe=""></ItemInputParam>
 <ItemInputParam name="BRANCHID" type="STRING" mappedto="PROCESS" value="BRANCHID" describe=""></ItemInputParam>
 <ItemInputParam name="Loan_ID" type="STRING" mappedto="PROCESS" value="Loan_ID" describe=""></ItemInputParam>
@@ -523,7 +525,7 @@ function generateUUID() {
 <ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
 <ItemUserAuthentication>True</ItemUserAuthentication>
 <ItemInputParam name="ATTDOCNAME" type="STRING" mappedto="PROCESS" value="ECMFileId" describe=""></ItemInputParam>
-<ItemInputParam name="ATTACHMENTID" type="STRING" mappedto="PROCESS" value="ATTACHEID" describe=""></ItemInputParam>
+<ItemInputParam name="ATTACHMENTID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
 <ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="Result" describe=""></ItemOutputParam>
 </Item>
 <Item><ItemNumber>14</ItemNumber>
