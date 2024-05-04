@@ -20,7 +20,7 @@
 <ItemName>EndItem1</ItemName>
 <ItemCaption>end pageflow</ItemCaption>
 <ItemDescription></ItemDescription>
-<ItemTop>745</ItemTop>
+<ItemTop>820</ItemTop>
 <ItemLeft>12</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
@@ -272,6 +272,7 @@ if (PARAMS.get("ConstantList").size() > 0) {
 <CaseType>JavaScript</CaseType>
 <ItemInputParam name="needUpdate" type="STRING" mappedto="PROCESS" value="needUpdate" describe=""></ItemInputParam>
 <ItemInputParam name="PARAMS" type="OBJECT" mappedto="PROCESS" value="PARAMS" describe=""></ItemInputParam>
+<ItemInputParam name="uploadFileID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
 </Item>
 <Item><ItemNumber>6</ItemNumber>
  <ItemGUID>F178BE3B-BD7E-4951-95EB-59A224D2F88C</ItemGUID>
@@ -300,8 +301,8 @@ if (PARAMS.get("ConstantList").size() > 0) {
 <ItemName>CaseOpItem2</ItemName>
 <ItemCaption>Формирование SYSNAME</ItemCaption>
 <ItemDescription></ItemDescription>
-<ItemTop>654</ItemTop>
-<ItemLeft>667</ItemLeft>
+<ItemTop>734</ItemTop>
+<ItemLeft>300</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
 <ItemData><![CDATA[var docType = InputParams.get("Document_type").getParamData();
@@ -329,8 +330,8 @@ return "EXIT";
 <ItemName>RemoteAction4</ItemName>
 <ItemCaption>Сохранение этапа с параметром SYSNAME</ItemCaption>
 <ItemDescription></ItemDescription>
-<ItemTop>740</ItemTop>
-<ItemLeft>667</ItemLeft>
+<ItemTop>820</ItemTop>
+<ItemLeft>300</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
 <ItemData><![CDATA[[frontws2]?docProcessingCreate]]></ItemData>
@@ -351,7 +352,7 @@ return "EXIT";
  
 <ItemType>TJavaScriptItem</ItemType>
 <ItemName>JavaScriptItem1</ItemName>
-<ItemCaption>подготовка параметров</ItemCaption>
+<ItemCaption>preparation parameters</ItemCaption>
 <ItemDescription>���� ������ ����
 </ItemDescription>
 <ItemTop>326</ItemTop>
@@ -422,6 +423,7 @@ function generateUUID() {
 
     
 ]]></ItemData>
+<ItemInputParam name="uploadFileID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
 <ItemInputParam name="ecmFileID" type="STRING" mappedto="PROCESS" value="ecmFileID" describe=""></ItemInputParam>
 <ItemInputParam name="BRANCHID" type="STRING" mappedto="PROCESS" value="BRANCHID" describe=""></ItemInputParam>
 <ItemInputParam name="Loan_ID" type="STRING" mappedto="PROCESS" value="Loan_ID" describe=""></ItemInputParam>
@@ -450,8 +452,8 @@ function generateUUID() {
 <ItemCaption>dsFileStorageExecuteUpdate</ItemCaption>
 <ItemDescription>Описание данного шага процесса
 </ItemDescription>
-<ItemTop>494</ItemTop>
-<ItemLeft>664</ItemLeft>
+<ItemTop>526</ItemTop>
+<ItemLeft>665</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
 <ItemData><![CDATA[[ftfilestoragews]?dsFileStorageExecuteUpdate]]></ItemData>
@@ -463,7 +465,7 @@ function generateUUID() {
 <ItemInputParam name="Storage" type="STRING" mappedto="PROCESS" value="STORAGE" describe=""></ItemInputParam>
 <ItemInputParam name="FileID" type="STRING" mappedto="PROCESS" value="ecmFileID" describe=""></ItemInputParam>
 <ItemInputParam name="File" type="OBJECT" mappedto="PROCESS" value="File" describe=""></ItemInputParam>
-<ItemOutputParam name="FileID" type="STRING" mappedto="PROCESS" value="ECMFileId" describe=""></ItemOutputParam>
+<ItemOutputParam name="FileID" type="STRING" mappedto="PROCESS" value="ECMFileIdNew" describe=""></ItemOutputParam>
 </Item>
 <Item><ItemNumber>11</ItemNumber>
  <ItemGUID>1689F885-6D49-4AD8-A21D-3265CCECC141</ItemGUID>
@@ -492,10 +494,10 @@ function generateUUID() {
  
 <ItemType>TRemoteAction</ItemType>
 <ItemName>RemoteAction2</ItemName>
-<ItemCaption>Скачиваем аттач</ItemCaption>
+<ItemCaption>Download attachment</ItemCaption>
 <ItemDescription></ItemDescription>
-<ItemTop>410</ItemTop>
-<ItemLeft>665</ItemLeft>
+<ItemTop>427</ItemTop>
+<ItemLeft>664</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
 <ItemData><![CDATA[[ftfilestoragews]?dsFileStorageExecuteDownload]]></ItemData>
@@ -512,10 +514,10 @@ function generateUUID() {
  
 <ItemType>TRemoteAction</ItemType>
 <ItemName>RemoteAction7</ItemName>
-<ItemCaption>обновляем аттач</ItemCaption>
+<ItemCaption>attachment Modify</ItemCaption>
 <ItemDescription></ItemDescription>
-<ItemTop>575</ItemTop>
-<ItemLeft>666</ItemLeft>
+<ItemTop>727</ItemTop>
+<ItemLeft>667</ItemLeft>
 <ItemWidth>200</ItemWidth>
 <ItemHeight>60</ItemHeight>
 <ItemData><![CDATA[[frontws2]?attachmentModify]]></ItemData>
@@ -523,7 +525,31 @@ function generateUUID() {
 <ItemIncludeSessionVariables>False</ItemIncludeSessionVariables>
 <ItemUserAuthentication>True</ItemUserAuthentication>
 <ItemInputParam name="ATTDOCNAME" type="STRING" mappedto="PROCESS" value="ECMFileId" describe=""></ItemInputParam>
-<ItemInputParam name="ATTACHMENTID" type="STRING" mappedto="PROCESS" value="ATTACHEID" describe=""></ItemInputParam>
+<ItemInputParam name="ATTACHMENTID" type="LONG" mappedto="PROCESS" value="uploadFileID" describe=""></ItemInputParam>
+<ItemOutputParam name="Result" type="OBJECT" mappedto="PROCESS" value="Result" describe=""></ItemOutputParam>
+</Item>
+<Item><ItemNumber>14</ItemNumber>
+ <ItemGUID>53270C97-E17F-4C4E-8ADB-3EE35C830332</ItemGUID>
+ 
+<ItemType>TJavaScriptItem</ItemType>
+<ItemName>JavaScriptItem3</ItemName>
+<ItemCaption>convert ECMFileId</ItemCaption>
+<ItemDescription>���� ������ ����
+</ItemDescription>
+<ItemTop>626</ItemTop>
+<ItemLeft>666</ItemLeft>
+<ItemWidth>200</ItemWidth>
+<ItemHeight>60</ItemHeight>
+<ItemData><![CDATA[var ECMFileIdNew = getInputParams("ECMFileIdNew") || "";
+logger.info("ECMFileIdNew: " + ECMFileIdNew);
+var ECMFileIdNew1 = ECMFileIdNew.replace('{','');   logger.info("ECMFileIdNew1: " + ECMFileIdNew1);
+var ECMFileIdNew2 = ECMFileIdNew1.replace('}','');  logger.info("ECMFileIdNew2: " + ECMFileIdNew2);
+
+var ECMFileId = ECMFileIdNew2;   logger.info("ECMFileId: " + ECMFileId);
+sop("ECMFileId", ECMFileId);
+]]></ItemData>
+<ItemInputParam name="ECMFileIdNew" type="STRING" mappedto="PROCESS" value="ECMFileIdNew" describe=""></ItemInputParam>
+<ItemOutputParam name="ECMFileId" type="STRING" mappedto="PROCESS" value="ECMFileId" describe=""></ItemOutputParam>
 </Item>
 </Items>
 <Links><Link>
@@ -582,8 +608,8 @@ function generateUUID() {
 <Caption>SAVEBYSYSNAME</Caption>
 <LinkStartItem>7</LinkStartItem>
 <LinkEndItem>8</LinkEndItem>
-<MiddlePointTop>723</MiddlePointTop>
-<MiddlePointLeft>764</MiddlePointLeft>
+<MiddlePointTop>803</MiddlePointTop>
+<MiddlePointLeft>397</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
@@ -594,7 +620,7 @@ function generateUUID() {
 <Caption>EXIT</Caption>
 <LinkStartItem>7</LinkStartItem>
 <LinkEndItem>2</LinkEndItem>
-<MiddlePointTop>696</MiddlePointTop>
+<MiddlePointTop>771</MiddlePointTop>
 <MiddlePointLeft>201</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
@@ -606,8 +632,8 @@ function generateUUID() {
 <Caption>Link13</Caption>
 <LinkStartItem>8</LinkStartItem>
 <LinkEndItem>2</LinkEndItem>
-<MiddlePointTop>773</MiddlePointTop>
-<MiddlePointLeft>437</MiddlePointLeft>
+<MiddlePointTop>870</MiddlePointTop>
+<MiddlePointLeft>267</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
@@ -618,8 +644,8 @@ function generateUUID() {
 <Caption>Link14</Caption>
 <LinkStartItem>8</LinkStartItem>
 <LinkEndItem>2</LinkEndItem>
-<MiddlePointTop>789</MiddlePointTop>
-<MiddlePointLeft>440</MiddlePointLeft>
+<MiddlePointTop>845</MiddlePointTop>
+<MiddlePointLeft>268</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
@@ -661,18 +687,6 @@ function generateUUID() {
 </Link><Link>
 <LinkNumber>12</LinkNumber>
 <LinkType>TLink</LinkType>
-<ItemName>Link1</ItemName>
-<LinkCaption></LinkCaption>
-<Caption>Link15</Caption>
-<LinkStartItem>1</LinkStartItem>
-<LinkEndItem>11</LinkEndItem>
-<MiddlePointTop>74</MiddlePointTop>
-<MiddlePointLeft>108</MiddlePointLeft>
-<MiddlePoint2Top>0</MiddlePoint2Top>
-<MiddlePoint2Left>0</MiddlePoint2Left>
-</Link><Link>
-<LinkNumber>13</LinkNumber>
-<LinkType>TLink</LinkType>
 <ItemName>Link5</ItemName>
 <LinkCaption></LinkCaption>
 <Caption>Link16</Caption>
@@ -683,7 +697,7 @@ function generateUUID() {
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>14</LinkNumber>
+<LinkNumber>13</LinkNumber>
 <LinkType>TLink</LinkType>
 <ItemName>Link13</ItemName>
 <LinkCaption>UPLOAD</LinkCaption>
@@ -695,7 +709,7 @@ function generateUUID() {
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>15</LinkNumber>
+<LinkNumber>14</LinkNumber>
 <LinkType>TExceptionLink</LinkType>
 <ItemName>ExceptionLink2</ItemName>
 <LinkCaption></LinkCaption>
@@ -707,7 +721,7 @@ function generateUUID() {
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>16</LinkNumber>
+<LinkNumber>15</LinkNumber>
 <LinkType>TLink</LinkType>
 <ItemName>Link7</ItemName>
 <LinkCaption></LinkCaption>
@@ -719,63 +733,99 @@ function generateUUID() {
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>17</LinkNumber>
+<LinkNumber>16</LinkNumber>
 <LinkType>TLink</LinkType>
 <ItemName>Link14</ItemName>
 <LinkCaption></LinkCaption>
 <Caption>Link19</Caption>
 <LinkStartItem>12</LinkStartItem>
 <LinkEndItem>10</LinkEndItem>
-<MiddlePointTop>484</MiddlePointTop>
-<MiddlePointLeft>762</MiddlePointLeft>
+<MiddlePointTop>507</MiddlePointTop>
+<MiddlePointLeft>731</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>18</LinkNumber>
-<LinkType>TLink</LinkType>
-<ItemName>Link3</ItemName>
-<LinkCaption></LinkCaption>
-<Caption>Link18</Caption>
-<LinkStartItem>10</LinkStartItem>
-<LinkEndItem>13</LinkEndItem>
-<MiddlePointTop>562</MiddlePointTop>
-<MiddlePointLeft>737</MiddlePointLeft>
-<MiddlePoint2Top>0</MiddlePoint2Top>
-<MiddlePoint2Left>0</MiddlePoint2Left>
-</Link><Link>
-<LinkNumber>19</LinkNumber>
-<LinkType>TExceptionLink</LinkType>
-<ItemName>ExceptionLink5</ItemName>
-<LinkCaption></LinkCaption>
-<Caption>Link19</Caption>
-<LinkStartItem>10</LinkStartItem>
-<LinkEndItem>13</LinkEndItem>
-<MiddlePointTop>564</MiddlePointTop>
-<MiddlePointLeft>765</MiddlePointLeft>
-<MiddlePoint2Top>0</MiddlePoint2Top>
-<MiddlePoint2Left>0</MiddlePoint2Left>
-</Link><Link>
-<LinkNumber>20</LinkNumber>
+<LinkNumber>17</LinkNumber>
 <LinkType>TLink</LinkType>
 <ItemName>Link15</ItemName>
 <LinkCaption></LinkCaption>
 <Caption>Link20</Caption>
 <LinkStartItem>13</LinkStartItem>
 <LinkEndItem>7</LinkEndItem>
-<MiddlePointTop>646</MiddlePointTop>
-<MiddlePointLeft>724</MiddlePointLeft>
+<MiddlePointTop>766</MiddlePointTop>
+<MiddlePointLeft>584</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link><Link>
-<LinkNumber>21</LinkNumber>
+<LinkNumber>18</LinkNumber>
 <LinkType>TExceptionLink</LinkType>
 <ItemName>ExceptionLink6</ItemName>
 <LinkCaption></LinkCaption>
 <Caption>Link21</Caption>
 <LinkStartItem>13</LinkStartItem>
 <LinkEndItem>7</LinkEndItem>
-<MiddlePointTop>644</MiddlePointTop>
+<MiddlePointTop>752</MiddlePointTop>
+<MiddlePointLeft>583</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>19</LinkNumber>
+<LinkType>TLink</LinkType>
+<ItemName>Link3</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link20</Caption>
+<LinkStartItem>10</LinkStartItem>
+<LinkEndItem>14</LinkEndItem>
+<MiddlePointTop>600</MiddlePointTop>
+<MiddlePointLeft>732</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>20</LinkNumber>
+<LinkType>TLink</LinkType>
+<ItemName>Link16</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link21</Caption>
+<LinkStartItem>14</LinkStartItem>
+<LinkEndItem>13</LinkEndItem>
+<MiddlePointTop>706</MiddlePointTop>
 <MiddlePointLeft>766</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>21</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<ItemName>ExceptionLink5</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link22</Caption>
+<LinkStartItem>10</LinkStartItem>
+<LinkEndItem>14</LinkEndItem>
+<MiddlePointTop>598</MiddlePointTop>
+<MiddlePointLeft>766</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>22</LinkNumber>
+<LinkType>TLink</LinkType>
+<ItemName>Link1</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link22</Caption>
+<LinkStartItem>1</LinkStartItem>
+<LinkEndItem>11</LinkEndItem>
+<MiddlePointTop>84</MiddlePointTop>
+<MiddlePointLeft>109</MiddlePointLeft>
+<MiddlePoint2Top>0</MiddlePoint2Top>
+<MiddlePoint2Left>0</MiddlePoint2Left>
+</Link><Link>
+<LinkNumber>23</LinkNumber>
+<LinkType>TExceptionLink</LinkType>
+<ItemName>ExceptionLink7</ItemName>
+<LinkCaption></LinkCaption>
+<Caption>Link23</Caption>
+<LinkStartItem>12</LinkStartItem>
+<LinkEndItem>10</LinkEndItem>
+<MiddlePointTop>506</MiddlePointTop>
+<MiddlePointLeft>764</MiddlePointLeft>
 <MiddlePoint2Top>0</MiddlePoint2Top>
 <MiddlePoint2Left>0</MiddlePoint2Left>
 </Link>
